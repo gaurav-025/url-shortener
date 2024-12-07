@@ -1,0 +1,162 @@
+/* Base styling */
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #eaeaea;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 10vh;
+}
+
+/* Header styling */
+h1 {
+    font-size: 2.5rem;
+    color: #37474f;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* Form container */
+#shortenForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+    gap: 20px;
+}
+
+/* Input field styling */
+#originalUrl {
+    width: 100%;
+    padding: 15px 20px;
+    font-size: 18px;
+    border: 2px solid #cfd8dc;
+    border-radius: 8px;
+    outline: none;
+    transition: all 0.3s;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    color: #455a64;
+}
+
+/* Input focus effect */
+#originalUrl:focus {
+    border-color: #0288d1;
+    box-shadow: 0 0 8px rgba(2, 136, 209, 0.2);
+}
+
+/* Button styling */
+button {
+    width: 25%;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+    background: #0043a8;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Button hover effect */
+button:hover {
+    background-color: #00298a;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Result container - initially hidden */
+#result {
+    display: none; /* Hide by default */
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 2px solid #cfd8dc;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+    color: #455a64;
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Display the result container when visible */
+#result.visible {
+    display: block;
+    opacity: 1;
+}
+
+/* Styling for the shortened URL link */
+.shortened-url {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #0043a8;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 15px;
+    background-color: #e3f2fd; /* Light yellow-green background */
+    padding: 8px 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+}
+
+/* Hover effect for the shortened URL */
+.shortened-url:hover {
+    background-color: #bbdefb; /* Brighter green */
+    color: #003d33; /* Darker text color */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    text-decoration: underline;
+}
+
+/* Styling for the access count */
+.access-count {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #0043a8; /* Match the color with the shortened URL */
+    background-color: #e3f2fd; /* Light blue background */
+    padding: 8px 12px;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    display: inline-block;
+    margin-top: 10px;
+    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+}
+
+/* Hover effect for the access count */
+.access-count:hover {
+    background-color: #bbdefb; /* Slightly darker blue */
+    color: #000; /* Text color */
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+/* Styling for the "Access Count" label */
+.access-count-label {
+    display: block;
+    font-size: 1.25rem;
+    font-weight: 500; /* Medium weight for a refined look */
+    color: #37474f; /* Dark gray color for better readability */
+    margin-top: 10px;
+    padding: 5px 10px;
+    border-radius: 5px; /* Rounded corners */
+    background-color: #e3f2fd; /* Light blue background for contrast */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transition */
+}
+
+/* Hover effect for the "Access Count" label */
+.access-count-label:hover {
+    background-color: #bbdefb; /* Slightly darker blue */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Deeper shadow */
+}
+
+

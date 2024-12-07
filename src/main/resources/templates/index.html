@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<h1>URL Shortener</h1>
+<form id="shortenForm">
+    <input type="url" id="originalUrl" placeholder="Enter your URL here" required>
+    <button type="submit">Shorten</button>
+</form>
+<div id="result"></div>
+
+<script>
+    document.getElementById('shortenForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+        const url = document.getElementById('originalUrl').value;
+        const resultDiv = document.getElementById('result');
+        try {
+            const response = await fetch('/shorten', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ url: url }),
+            });
+            const data = await response.json();
+            if (response.ok) {
+                // Show the result with the shortened URL and access count
+                resultDiv.innerHTML = `
+                <p class="access-count-label">Shortened URL: <a class="shortened-url" href="${data.shortCode}/redirect" target="_blank">${data.shortCode}</a></p>
+                <p class="access-count-label">Clicks Count:</p>
+                <div class="access-count">${data.accessCount}</div>
+            `;
+                resultDiv.classList.add('visible');
+            } else {
+                // Show an error message
+                resultDiv.innerHTML = `<p>Error: ${data.message || 'Something went wrong'}</p>`;
+                resultDiv.classList.add('visible');
+            }
+        } catch (error) {
+            // Handle fetch errors
+            resultDiv.innerHTML = `<p>Error: ${error.message}</p>`;
+            resultDiv.classList.add('visible');
+        }
+    });
+
+</script>
+</body>
+</html>
