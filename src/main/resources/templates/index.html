@@ -32,7 +32,7 @@
             if (response.ok) {
                 // Show the result with the shortened URL and access count
                 resultDiv.innerHTML = `
-                <p class="access-count-label">Shortened URL: <a class="shortened-url" href="${data.shortCode}/redirect" target="_blank">${data.shortCode}</a></p>
+                <p class="access-count-label">Shortened URL: <a class="shortened-url" href="/shorten/${data.shortCode}/redirect" target="_blank">Shortly/${data.shortCode}</a></p>
                 <p class="access-count-label">Clicks Count:</p>
                 <div class="access-count">${data.accessCount}</div>
             `;

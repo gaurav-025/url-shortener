@@ -40,7 +40,7 @@ public class UrlController {
 
         try {
             UrlEntity createdUrl = urlService.createShortUrl(originalUrl);
-            createdUrl.setShortCode(urlService.getFullUrl(createdUrl));
+//            createdUrl.setShortCode(urlService.getFullUrl(createdUrl));
             return new ResponseEntity<>(createdUrl, HttpStatus.CREATED);
         } catch (Exception e) {
             logger.error("Error creating short URL for: {}", originalUrl, e);
