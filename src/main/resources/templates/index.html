@@ -1,54 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>URL Shortener</title>
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/styles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Cedarville" rel="stylesheet" />
+
 </head>
 <body>
-<h1>URL Shortener</h1>
-<form id="shortenForm">
-    <input type="url" id="originalUrl" placeholder="Enter your URL here" required>
-    <button type="submit">Shorten</button>
-</form>
-<div id="result"></div>
+<main class="container" role="main" aria-labelledby="pageTitle">
+    <h1 id="pageTitle" tabindex="0">URL Shortener</h1>
+
+    <form id="shortenForm" aria-describedby="formHelp" novalidate>
+        <label for="originalUrl" class="sr-only">Enter your URL</label>
+        <input
+                type="url"
+                id="originalUrl"
+                name="originalUrl"
+                placeholder="Enter your URL here"
+                required
+                autocomplete="url"
+                pattern="https?://.+"
+                aria-required="true"
+                aria-describedby="formHelp"
+                inputmode="url"
+        />
+        <small id="formHelp" class="sr-only">URL must start with http:// or https://</small>
+        <button type="submit" aria-label="Shorten URL">Shorten</button>
+    </form>
+
+    <section id="result" aria-live="polite" aria-atomic="true" tabindex="0" role="region"></section>
+</main>
 
 <script>
-    document.getElementById('shortenForm').addEventListener('submit', async function(event) {
-        event.preventDefault();
-        const url = document.getElementById('originalUrl').value;
-        const resultDiv = document.getElementById('result');
+    let baseUrl = '';
+    fetch('api/config/base-url')
+        .then(res=>res.json())
+        .then(data=>{
+            baseUrl=data.baseUrl;
+        });
+    const form = document.getElementById('shortenForm');
+    const resultDiv = document.getElementById('result');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const urlInput = document.getElementById('originalUrl');
+        const url = urlInput.value.trim();
+
+        const urlPattern = /^https?:\/\/.+/i;
+        if (!urlPattern.test(url)) {
+            resultDiv.textContent = 'Please enter a valid URL starting with http:// or https://';
+            resultDiv.className = 'visible error result-animated';
+            resultDiv.focus();
+            return;
+        }
+
+        resultDiv.className = 'visible';
+        resultDiv.textContent = 'Shortening your URL...';
+
         try {
-            const response = await fetch('/shorten', {
+            const response = await fetch('/s', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ url: url }),
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url }),
             });
             const data = await response.json();
+
+            resultDiv.classList.remove('result-animated');
+            void resultDiv.offsetWidth; // trigger reflow
+
             if (response.ok) {
-                // Show the result with the shortened URL and access count
+                const fullUrl = `${baseUrl}/s/${data.shortCode}`;
+                const createdDate = new Date(data.createdAt).toLocaleString('en-US', {
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                });
                 resultDiv.innerHTML = `
-                <p class="access-count-label">Shortened URL: <a class="shortened-url" href="/shorten/${data.shortCode}/redirect" target="_blank">Shortly/${data.shortCode}</a></p>
-                <p class="access-count-label">Clicks Count:</p>
-                <div class="access-count">${data.accessCount}</div>
-            `;
-                resultDiv.classList.add('visible');
+          <p class="access-count-label">
+            Shortened URL:
+            <a class="shortened-url" href="${fullUrl}" target="_blank" rel="noopener noreferrer">
+              ${fullUrl}
+            </a>
+          </p>
+<!--          <p class="access-count-label">Clicks Count: ${data.accessCount}</p>-->
+<!--          <div class="access-count">${data.accessCount}</div>-->
+                <div class="access-row">
+                    <span class="access-count-label">Clicks Count:</span>
+                    <span class="access-count">${data.accessCount}</span>
+                </div>
+                <div class="created-row">
+                    <span class="created-label">Created on:</span>
+                    <span class="created-date">${createdDate}</span>
+                </div>
+
+        `;
+                resultDiv.className = 'visible result-animated';
             } else {
-                // Show an error message
-                resultDiv.innerHTML = `<p>Error: ${data.message || 'Something went wrong'}</p>`;
-                resultDiv.classList.add('visible');
+                resultDiv.textContent = `Error: ${data.message || 'Something went wrong'}`;
+                resultDiv.className = 'visible error result-animated';
             }
         } catch (error) {
-            // Handle fetch errors
-            resultDiv.innerHTML = `<p>Error: ${error.message}</p>`;
-            resultDiv.classList.add('visible');
+            resultDiv.textContent = `Error: ${error.message}`;
+            resultDiv.className = 'visible error result-animated';
         }
+        resultDiv.focus();
     });
-
 </script>
 </body>
 </html>

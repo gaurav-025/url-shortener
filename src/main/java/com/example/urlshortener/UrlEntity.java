@@ -1,35 +1,32 @@
 package com.example.urlshortener;
 
-import jakarta.persistence.*;
+//import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name="urls")
+@Document(collection="urls")
+@CompoundIndex(name="shortCode_index", def = "{'shortCode': 1}", unique = true)
 public class UrlEntity {
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Long Id;
+    private String Id;
 
-    @Column(nullable=false,unique=true)
     private String shortCode;
 
-    @Column(nullable=false)
     private String url;
 
-    @Column(nullable=false,updatable = false)
     private LocalDateTime createdAt=LocalDateTime.now();
 
-    @Column(nullable=false)
     private LocalDateTime updatedAt=LocalDateTime.now();
 
-    @Column(nullable=false)
     private int accessCount=0;
 
-    public Long getId() {
+    public String getId() {
         return Id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         Id = id;
     }
 

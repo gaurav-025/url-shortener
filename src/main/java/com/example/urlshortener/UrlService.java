@@ -1,6 +1,7 @@
 package com.example.urlshortener;
 
-import jakarta.transaction.Transactional;
+//import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -43,7 +44,7 @@ public class UrlService {
 
         String shortCode;
         do {
-            shortCode = base62Encode(Long.parseLong(generateUniqueId(originalUrl), 16));
+            shortCode = base62EncodeFromHex(generateUniqueId(originalUrl));
             if (shortCode.length() < 7) {
                 // Pad the short code if it's too short
                 shortCode = String.format("%-7s", shortCode).replace(' ', '0');
@@ -98,11 +99,23 @@ public class UrlService {
         }
     }
 
-    private String base62Encode(long num) {
+//    private String base62Encode(long num) {
+//        StringBuilder encoded = new StringBuilder();
+//        while (num > 0) {
+//            encoded.insert(0, BASE62_CHARACTERS.charAt((int) (num % 62)));
+//            num /= 62;
+//        }
+//        return encoded.toString();
+//    }
+
+    private String base62EncodeFromHex(String hex) {
+        // Convert hex string to BigInteger to handle large hashes
+        java.math.BigInteger number = new java.math.BigInteger(hex, 16);
         StringBuilder encoded = new StringBuilder();
-        while (num > 0) {
-            encoded.insert(0, BASE62_CHARACTERS.charAt((int) (num % 62)));
-            num /= 62;
+        while (number.compareTo(java.math.BigInteger.ZERO) > 0) {
+            int index = number.mod(java.math.BigInteger.valueOf(62)).intValue();
+            encoded.insert(0, BASE62_CHARACTERS.charAt(index));
+            number = number.divide(java.math.BigInteger.valueOf(62));
         }
         return encoded.toString();
     }

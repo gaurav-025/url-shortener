@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/shorten")
+@RequestMapping("/s")
 public class UrlController {
     private static final Logger logger = LoggerFactory.getLogger(UrlController.class);
     private final UrlService urlService;
@@ -48,14 +48,14 @@ public class UrlController {
         }
     }
 
-    @GetMapping("/{shortCode}")
-    public ResponseEntity<UrlEntity> getOriginalUrl(@PathVariable String shortCode) {
-        logger.info("Received request to retrieve original URL for short code: {}", shortCode);
-
-        Optional<UrlEntity> urlEntity = urlService.getOriginalUrl(shortCode);
-        return urlEntity.map(ResponseEntity::ok)
-                .orElseGet(() -> new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
-    }
+//    @GetMapping("/{shortCode}")
+//    public ResponseEntity<UrlEntity> getOriginalUrl(@PathVariable String shortCode) {
+//        logger.info("Received request to retrieve original URL for short code: {}", shortCode);
+//
+//        Optional<UrlEntity> urlEntity = urlService.getOriginalUrl(shortCode);
+//        return urlEntity.map(ResponseEntity::ok)
+//                .orElseGet(() -> new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
+//    }
 
     @PutMapping("/{shortCode}")
     public ResponseEntity<UrlEntity> updateShortUrl(@PathVariable String shortCode, @RequestBody UrlEntity urlEntity) {
@@ -115,7 +115,7 @@ public class UrlController {
         }
     }
 
-    @GetMapping("/{shortCode}/redirect")
+    @GetMapping("/{shortCode}")
     public void redirectToOriginalUrl(@PathVariable String shortCode, HttpServletResponse response){
         logger.info("Redirecting short code: {}",shortCode);
         Optional<UrlEntity> urlEntity=urlService.getOriginalUrl(shortCode);
