@@ -6,20 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>URL Shortener</title>
     <link rel="stylesheet" href="/styles.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Cedarville" rel="stylesheet" />
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
 </head>
+
 <body>
 <main class="container" role="main" aria-labelledby="pageTitle">
-    <h1 id="pageTitle" tabindex="0">URL Shortener</h1>
+    <section class="header">
+        <h1 id="pageTitle" tabindex="0">🔗 URL Shortener</h1>
+        <p class="tagline">Paste a long URL to shorten it instantly.</p>
+    </section>
 
-    <form id="shortenForm" aria-describedby="formHelp" novalidate>
+    <form id="shortenForm" class="shorten-form" aria-describedby="formHelp" novalidate>
         <label for="originalUrl" class="sr-only">Enter your URL</label>
         <input
                 type="url"
                 id="originalUrl"
                 name="originalUrl"
-                placeholder="Enter your URL here"
+                placeholder="https://example.com"
                 required
                 autocomplete="url"
                 pattern="https?://.+"
@@ -28,19 +31,15 @@
                 inputmode="url"
         />
         <small id="formHelp" class="sr-only">URL must start with http:// or https://</small>
-        <button type="submit" aria-label="Shorten URL">Shorten</button>
+        <button type="submit" class="submit-btn" aria-label="Shorten URL">Shorten</button>
     </form>
 
-    <section id="result" aria-live="polite" aria-atomic="true" tabindex="0" role="region"></section>
+    <section id="result" class="result" aria-live="polite" aria-atomic="true" role="region" tabindex="0"></section>
 </main>
 
 <script>
-    let baseUrl = '';
-    fetch('api/config/base-url')
-        .then(res=>res.json())
-        .then(data=>{
-            baseUrl=data.baseUrl;
-        });
+    let baseUrl = 'https://tiny-5b5i.onrender.com';
+
     const form = document.getElementById('shortenForm');
     const resultDiv = document.getElementById('result');
 
@@ -48,8 +47,8 @@
         e.preventDefault();
         const urlInput = document.getElementById('originalUrl');
         const url = urlInput.value.trim();
-
         const urlPattern = /^https?:\/\/.+/i;
+
         if (!urlPattern.test(url)) {
             resultDiv.textContent = 'Please enter a valid URL starting with http:// or https://';
             resultDiv.className = 'visible error result-animated';
@@ -66,49 +65,49 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ url }),
             });
-            const data = await response.json();
 
+            const data = await response.json();
             resultDiv.classList.remove('result-animated');
-            void resultDiv.offsetWidth; // trigger reflow
+            void resultDiv.offsetWidth;
 
             if (response.ok) {
                 const fullUrl = `${baseUrl}/s/${data.shortCode}`;
                 const createdDate = new Date(data.createdAt).toLocaleString('en-US', {
+                    timeZone: 'Asia/Kolkata',
                     month: 'long',
                     day: 'numeric',
                     year: 'numeric',
                     hour: 'numeric',
                     minute: '2-digit',
                 });
-                resultDiv.innerHTML = `
-          <p class="access-count-label">
-            Shortened URL:
-            <a class="shortened-url" href="${fullUrl}" target="_blank" rel="noopener noreferrer">
-              ${fullUrl}
-            </a>
-          </p>
-<!--          <p class="access-count-label">Clicks Count: ${data.accessCount}</p>-->
-<!--          <div class="access-count">${data.accessCount}</div>-->
-                <div class="access-row">
-                    <span class="access-count-label">Clicks Count:</span>
-                    <span class="access-count">${data.accessCount}</span>
-                </div>
-                <div class="created-row">
-                    <span class="created-label">Created on:</span>
-                    <span class="created-date">${createdDate}</span>
-                </div>
 
-        `;
-                resultDiv.className = 'visible result-animated';
+                resultDiv.innerHTML = `
+            <div class="result-content">
+              <p class="label">Shortened URL:</p>
+              <p><a class="shortened-url" href="${fullUrl}" target="_blank" rel="noopener noreferrer">${fullUrl}</a></p>
+
+              <div class="info-row">
+                <span class="label">Clicks Count:</span>
+                <span class="value">${data.accessCount}</span>
+              </div>
+
+              <div class="info-row">
+                <span class="label">Created on:</span>
+                <span class="value">${createdDate} GMT</span>
+              </div>
+            </div>
+          `;
+                resultDiv.className = 'visible result-success result-animated';
             } else {
-                resultDiv.textContent = `Error: ${data.message || 'Something went wrong'}`;
-                resultDiv.className = 'visible error result-animated';
+                resultDiv.textContent = `❌ Error: ${data.message || 'Something went wrong'}`;
+                resultDiv.className = 'visible result-error result-animated';
             }
         } catch (error) {
-            resultDiv.textContent = `Error: ${error.message}`;
-            resultDiv.className = 'visible error result-animated';
+            resultDiv.textContent = `❌ Error: ${error.message}`;
+            resultDiv.className = 'visible result-error result-animated';
         }
-        resultDiv.focus();
+
+        // resultDiv.focus();
     });
 </script>
 </body>
